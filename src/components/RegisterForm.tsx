@@ -1,12 +1,19 @@
+import { generateSecretKey } from "nostr-tools";
 import { useRef, useState } from "react";
 const RegisterForm = () => {
   const inputUserName = useRef<HTMLInputElement | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [sK, setSK] = useState<Uint8Array | null>(null);
+  const generateNewSK = () => {
+    const newSK = generateSecretKey();
+    setSK(newSK);
+  };
   const createUserHandle = () => {
     if (inputUserName.current && inputUserName.current.value) {
       setUserName(inputUserName.current.value);
       setError(null);
+      generateNewSK();
     } else {
       setError("名前を入力してください");
     }
