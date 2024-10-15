@@ -5,6 +5,7 @@ const RegisterForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [sK, setSK] = useState<Uint8Array | null>(null);
   const relayRef = useRef<Relay | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
   const generateNewSK = () => {
     const newSK = generateSecretKey();
     setSK(newSK);
@@ -15,11 +16,15 @@ const RegisterForm = () => {
       const relay = await Relay.connect("wss://relay-jp.nostr.wirednet.jp");
       relayRef.current = relay;
       console.log(`connected to ${relay.url}`);
+      setIsConnected(true);
     } catch (error) {
       console.error("Error connecting to relay:", error);
     }
   };
-  const sendUserDataToRelay = async (secreteKey: Uint8Array | null) => {
+  const sendUserDataToRelay = async (
+    secreteKey: Uint8Array | null,
+    userName: string
+  ) => {
     if (secreteKey) {
       // ユーザーデータ
       const event = finalizeEvent(
@@ -27,7 +32,7 @@ const RegisterForm = () => {
           kind: 0,
           created_at: Math.floor(Date.now() / 1000),
           tags: [],
-          content: `{"name":"${inputUserName.current?.value}","display_name":"${inputUserName.current?.value}","picture":"https://bananas"}`,
+          content: `{"name":"${userName}","display_name":"${userName}","picture":"https://bananas"}`,
         },
         secreteKey
       );
@@ -40,8 +45,9 @@ const RegisterForm = () => {
   const createUserHandle = async () => {
     if (inputUserName.current && inputUserName.current.value) {
       setError(null);
+      const currentUserName = inputUserName.current.value;
       const secretKey = generateNewSK();
-      await sendUserDataToRelay(secretKey);
+      await sendUserDataToRelay(secretKey, currentUserName);
     } else {
       setError("名前を入力してください");
     }
@@ -68,7 +74,9 @@ const RegisterForm = () => {
         />
       </div>
       <div>{error ? <div style={{ color: "red" }}>{error}</div> : ""}</div>
-      <button onClick={createUserHandle}>Register</button>
+      <button disabled={!isConnected} onClick={createUserHandle}>
+        Register
+      </button>
     </>
   );
 };
