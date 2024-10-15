@@ -8,12 +8,14 @@ const RegisterForm = () => {
   const generateNewSK = () => {
     const newSK = generateSecretKey();
     setSK(newSK);
+    return newSK;
   };
+
   const createUserHandle = () => {
     if (inputUserName.current && inputUserName.current.value) {
       setUserName(inputUserName.current.value);
       setError(null);
-      generateNewSK();
+      const secretKey = generateNewSK();
     } else {
       setError("名前を入力してください");
     }
