@@ -48,6 +48,7 @@ const RegisterForm = () => {
       const currentUserName = inputUserName.current.value;
       const secretKey = generateNewSK();
       await sendUserDataToRelay(secretKey, currentUserName);
+      inputUserName.current.value = "";
     } else {
       setError("名前を入力してください");
     }
