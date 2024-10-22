@@ -42,16 +42,15 @@ const ShowPosts = () => {
   /*すべての投稿を読み込んだ後に実行 */
   useEffect(() => {
     if (!isLoadingPosts) {
-      console.log("準備完了");
       const tmpNormalPosts = posts.filter(
         //通常の投稿が入っている
         (post: Event) => !post.tags.some((tag) => tag[0] === "e")
       );
-      setNormalPosts((prevPosts: Event[]) => [...tmpNormalPosts, ...prevPosts]);
       const tmpReplaylPosts = posts.filter(
-        //通常の投稿が入っている
+        //返信の投稿が入っている
         (post: Event) => post.tags.some((tag) => tag[0] === "e")
       );
+      setNormalPosts((prevPosts: Event[]) => [...tmpNormalPosts, ...prevPosts]);
       setReplayPosts((prevPosts: Event[]) => [
         ...tmpReplaylPosts,
         ...prevPosts,
