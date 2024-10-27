@@ -2,41 +2,62 @@ import { Event, Filter, Relay } from "nostr-tools";
 import { useEffect, useRef, useState } from "react";
 
 const ShowPosts = () => {
-  const relayRef = useRef<Relay | null>(null);
+  const relayRef = useRef<Relay[] | null>([]);
   const [posts, setPosts] = useState<Event[]>([]);
   const [isLoadingPosts, setIsLoadingPosts] = useState<boolean>(true);
   const [replayPosts, setReplayPosts] = useState<Event[]>([]);
   const [normalPosts, setNormalPosts] = useState<Event[]>([]);
+  /*poolを使ったリレー接続 */
 
+  /*リレーへ接続 */
+  const connectRelays = async (urlRelays: string[]): Promise<Relay[]> => {
+    const relays: Relay[] = [];
+    for (const url of urlRelays) {
+      try {
+        const relay = await Relay.connect(url);
+        relays.push(relay);
+        console.log(`Connected to relay ${url}`);
+      } catch (error) {
+        console.log(`Failed to connect to relay ${url}`);
+      }
+    }
+    return relays;
+  };
   /*すべての投稿を読み込む */
-  const getRelayPosts = async () => {
+  const getRelaysPosts = async (relays: Relay[]) => {
     try {
-      const relay = await Relay.connect("wss://relay-jp.nostr.wirednet.jp");
-      relayRef.current = relay;
-      console.log(`connected to ${relay.url}`);
-      const filter: Filter = { kinds: [1], limit: 100 };
-      const subscription = relay.subscribe([filter], {
-        onevent(event: Event) {
-          console.log("event:", event);
-          setPosts((prevPosts) => [event, ...prevPosts]);
-        },
-        oneose() {
-          //eoseは保存しているイベントをすべて吐き出した後出されるイベント
-          subscription.close();
-          setIsLoadingPosts(false);
-        },
-      });
+      for (const relay of relays) {
+        const filter: Filter = { kinds: [1], limit: 100 };
+        const subscription = relay.subscribe([filter], {
+          onevent(event: Event) {
+            console.log("event:", event);
+            setPosts((prevPosts) => [event, ...prevPosts]);
+          },
+          oneose() {
+            //eoseは保存しているイベントをすべて吐き出した後出されるイベント
+            subscription.close();
+            setIsLoadingPosts(false);
+          },
+        });
+      }
     } catch (error) {
       console.error("Error connecting to relay:", error);
     }
   };
   useEffect(() => {
-    getRelayPosts();
+    const relayURLs = [
+      "wss://relay-jp.nostr.wirednet.jp",
+      "punya",
+      "wss://relay-jp.nostr.wirednet.jp",
+    ];
+    const setupRelays = async () => {
+      const connectedRelays = await connectRelays(relayURLs);
+      relayRef.current = connectedRelays;
+    };
+    setupRelays();
     return () => {
       //コンポーネントアンマウント時接続を切る
-      if (relayRef.current) {
-        relayRef.current.close();
-      }
+      relayRef.current?.forEach((relay) => relay.close());
     };
   }, []);
   /*すべての投稿を読み込んだ後に実行 */
