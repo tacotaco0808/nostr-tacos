@@ -32,7 +32,14 @@ const ShowPosts = () => {
       subscription.close();
     };
   }, []);
-
+  /*画像urlを判別してそのurlを返す*/
+  const judgeImageUrls = (content: string) => {
+    //:\/\/は「://」と一致 /は特殊文字だから打消し
+    //[^\s] この部分は「空白以外の任意の文字」^は否定　\s は空白文字（スペース、タブ、改行など
+    //[^\s]+ は、空白がない文字列
+    const urlRegex = /(https?:\/\/[^\s]+(?:jpg|jpeg|png|gif|webp))/g;
+    return content.match(urlRegex);
+  };
   /*すべての投稿を読み込んだ後に実行 */
   /*投稿が返信か、通常か仕分け */
   useEffect(() => {
@@ -58,9 +65,17 @@ const ShowPosts = () => {
       <ul>
         <h3>通常の投稿</h3>
         {normalPosts.map((post, index) => {
+          const imgUrls: string[] | null = judgeImageUrls(post.content);
           return (
             <li key={post.id}>
               {index + 1}:{post.content}
+              {imgUrls?.map((url) => {
+                return (
+                  <div key={url}>
+                    <img src={url} alt="Image" style={{ maxWidth: "100%" }} />
+                  </div>
+                );
+              })}
             </li>
           );
         })}
@@ -68,9 +83,17 @@ const ShowPosts = () => {
       <ul>
         <h3>返信の投稿</h3>
         {replayPosts.map((post, index) => {
+          const imgUrls: string[] | null = judgeImageUrls(post.content);
           return (
             <li key={post.id}>
               {index + 1}:{post.content}
+              {imgUrls?.map((url) => {
+                return (
+                  <div key={url}>
+                    <img src={url} alt="Image" style={{ maxWidth: "100%" }} />
+                  </div>
+                );
+              })}
             </li>
           );
         })}
