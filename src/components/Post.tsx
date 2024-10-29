@@ -1,5 +1,5 @@
 import { Event } from "nostr-tools";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ReplayTargetPost from "./ReplayTargetPost";
 type nostrPost = Event & {
   isReplay: boolean;
@@ -12,7 +12,8 @@ type postProps = {
 const Post: React.FC<postProps> = ({ postEvent, isLoadingPosts }) => {
   //   const [replayPosts, setReplayPosts] = useState<nostrPost[]>([]);
   //   const [normalPosts, setNormalPosts] = useState<nostrPost[]>([]);
-
+  const [isVisibleReplayTargetPost, setIsReplayTargetPost] =
+    useState<boolean>(false);
   /*返信投稿と通常投稿振り分け */
   useEffect(() => {
     if (!isLoadingPosts) {
@@ -29,7 +30,9 @@ const Post: React.FC<postProps> = ({ postEvent, isLoadingPosts }) => {
     return content.match(urlRegex);
   };
   const imgUrls: string[] | null = judgeImageUrls(postEvent.content);
-
+  const handleShowReplayTargetPost = () => {
+    setIsReplayTargetPost(true);
+  };
   return (
     <>
       <ul>
@@ -60,10 +63,16 @@ const Post: React.FC<postProps> = ({ postEvent, isLoadingPosts }) => {
                 }}
               >
                 {/* 返信元の投稿を表示する処理のプレースホルダー */}
-                <ReplayTargetPost
-                  replayPost={postEvent}
-                  isLoadingPost={isLoadingPosts}
-                />
+                {isVisibleReplayTargetPost ? (
+                  <ReplayTargetPost
+                    replayPost={postEvent}
+                    isLoadingPost={isLoadingPosts}
+                  />
+                ) : (
+                  <button onClick={handleShowReplayTargetPost}>
+                    返信元を表示する
+                  </button>
+                )}
               </div>
             </div>
           ) : (
