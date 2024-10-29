@@ -1,7 +1,9 @@
 import { Event } from "nostr-tools";
 import { useEffect } from "react";
+import ReplayTargetPost from "./ReplayTargetPost";
 type nostrPost = Event & {
   isReplay: boolean;
+  toRelayURLs: string[];
 };
 type postProps = {
   postEvent: nostrPost;
@@ -30,43 +32,53 @@ const Post: React.FC<postProps> = ({ postEvent, isLoadingPosts }) => {
 
   return (
     <>
-      <li key={postEvent.id}>
-        {postEvent.isReplay ? (
-          // 返信投稿の場合の表示
-          <div
-            style={{
-              backgroundColor: "#f0f8ff",
-              padding: "10px",
-              borderRadius: "5px",
-            }}
-          >
-            <p>
-              <strong>返信:</strong> {postEvent.content}
-            </p>
-            {imgUrls?.map((url) => (
-              <div key={url}>
-                <img src={url} alt="Image" style={{ maxWidth: "100%" }} />
-              </div>
-            ))}
-            {/* 返信元の投稿を表示する処理のプレースホルダー */}
+      <ul>
+        <li key={postEvent.id}>
+          {postEvent.isReplay ? (
+            // 返信投稿の場合の表示
             <div
-              style={{ marginTop: "10px", fontStyle: "italic", color: "#888" }}
+              style={{
+                backgroundColor: "#f0f8ff",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
             >
-              返信元の投稿を表示する予定です
-            </div>
-          </div>
-        ) : (
-          // 通常投稿の場合の表示
-          <div style={{ padding: "10px" }}>
-            <p>{postEvent.content}</p>
-            {imgUrls?.map((url) => (
-              <div key={url}>
-                <img src={url} alt="Image" style={{ maxWidth: "100%" }} />
+              <p>
+                <strong>返信:</strong> {postEvent.content}
+              </p>
+              {imgUrls?.map((url) => (
+                <div key={url}>
+                  <img src={url} alt="Image" style={{ maxWidth: "100%" }} />
+                </div>
+              ))}
+
+              <div
+                style={{
+                  marginTop: "10px",
+                  fontStyle: "italic",
+                  color: "#888",
+                }}
+              >
+                {/* 返信元の投稿を表示する処理のプレースホルダー */}
+                <ReplayTargetPost
+                  replayPost={postEvent}
+                  isLoadingPost={isLoadingPosts}
+                />
               </div>
-            ))}
-          </div>
-        )}
-      </li>
+            </div>
+          ) : (
+            // 通常投稿の場合の表示
+            <div style={{ padding: "10px" }}>
+              <p>{postEvent.content}</p>
+              {imgUrls?.map((url) => (
+                <div key={url}>
+                  <img src={url} alt="Image" style={{ maxWidth: "100%" }} />
+                </div>
+              ))}
+            </div>
+          )}
+        </li>
+      </ul>
     </>
   );
 };

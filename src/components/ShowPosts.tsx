@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Post from "./Post";
 type nostrPost = Event & {
   isReplay: boolean;
+  toRelayURLs: string[];
 };
 const ShowPosts = () => {
   const [posts, setPosts] = useState<nostrPost[]>([]);
@@ -25,6 +26,7 @@ const ShowPosts = () => {
         const newPost: nostrPost = {
           ...event, //返信投稿の場合マーク
           isReplay: event.tags.some((tag) => tag[0] === "e"),
+          toRelayURLs: relayURLs,
         };
         setPosts((prevPosts) => [...prevPosts, newPost]);
       },
