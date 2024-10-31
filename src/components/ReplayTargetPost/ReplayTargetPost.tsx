@@ -1,6 +1,7 @@
 import { Event, Filter, SimplePool } from "nostr-tools";
 import { useEffect, useState } from "react";
-import Post from "./Post";
+import Post from "../Post/Post";
+import styles from "./ReplayTargetPost.module.scss";
 
 type nostrPost = Event & {
   isReplay: boolean;

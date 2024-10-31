@@ -1,5 +1,6 @@
 import { finalizeEvent, generateSecretKey, Relay } from "nostr-tools";
 import { useEffect, useRef, useState } from "react";
+import styles from "./RegisterForm.module.scss";
 const RegisterForm = () => {
   const inputUserName = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState<string | null>(null);

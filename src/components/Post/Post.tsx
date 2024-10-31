@@ -1,6 +1,7 @@
 import { Event } from "nostr-tools";
 import { useEffect, useState } from "react";
-import ReplayTargetPost from "./ReplayTargetPost";
+import ReplayTargetPost from "../ReplayTargetPost/ReplayTargetPost";
+import styles from "./Post.module.scss";
 type nostrPost = Event & {
   isReplay: boolean;
   toRelayURLs: string[];
