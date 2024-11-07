@@ -1,30 +1,22 @@
-import { finalizeEvent, generateSecretKey, Relay } from "nostr-tools";
-import { useEffect, useRef, useState } from "react";
+import { finalizeEvent, generateSecretKey, SimplePool } from "nostr-tools";
+import { useRef, useState } from "react";
 import styles from "./RegisterForm.module.scss";
 const RegisterForm = () => {
   const inputUserName = useRef<HTMLInputElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [sK, setSK] = useState<Uint8Array | null>(null);
-  const relayRef = useRef<Relay | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const relayURLs = ["ws://172.16.1.73"];
   const generateNewSK = () => {
     const newSK = generateSecretKey();
     setSK(newSK);
     return newSK;
   };
-  const initializeRelay = async () => {
-    try {
-      const relay = await Relay.connect("ws://172.16.1.73");
-      relayRef.current = relay;
-      console.log(`connected to ${relay.url}`);
-      setIsConnected(true);
-    } catch (error) {
-      console.error("Error connecting to relay:", error);
-    }
-  };
+  const pool = new SimplePool();
+
   const sendUserDataToRelay = async (
     secreteKey: Uint8Array | null,
-    userName: string
+    userName: string,
+    relays: string[]
   ) => {
     if (secreteKey) {
       // ユーザーデータ
@@ -37,7 +29,8 @@ const RegisterForm = () => {
         },
         secreteKey
       );
-      await relayRef.current?.publish(event);
+      const signedEvent = finalizeEvent(event, secreteKey);
+      await pool.publish(relays, signedEvent);
     } else {
       console.error("Error sending data to relay:");
       return;
@@ -48,21 +41,13 @@ const RegisterForm = () => {
       setError(null);
       const currentUserName = inputUserName.current.value;
       const secretKey = generateNewSK();
-      await sendUserDataToRelay(secretKey, currentUserName);
+      await sendUserDataToRelay(secretKey, currentUserName, relayURLs);
       inputUserName.current.value = "";
     } else {
       setError("名前を入力してください");
     }
   };
-  useEffect(() => {
-    initializeRelay();
-    return () => {
-      //コンポーネントアンマウント時接続を切る
-      if (relayRef.current) {
-        relayRef.current.close();
-      }
-    };
-  }, []);
+
   return (
     <>
       <h3>新しくユーザーを作成</h3>
@@ -76,9 +61,7 @@ const RegisterForm = () => {
         />
       </div>
       <div>{error ? <div style={{ color: "red" }}>{error}</div> : ""}</div>
-      <button disabled={!isConnected} onClick={createUserHandle}>
-        Register
-      </button>
+      <button onClick={createUserHandle}>Register</button>
     </>
   );
 };
