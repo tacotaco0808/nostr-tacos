@@ -1,5 +1,10 @@
+import { Router } from "./routes/Router";
 function App() {
-  return <>nostrtacos</>;
+  return (
+    <>
+      <Router />
+    </>
+  );
 }
 
 export default App;

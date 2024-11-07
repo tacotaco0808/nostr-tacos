@@ -13,11 +13,7 @@ const ShowPosts = () => {
   const pool = new SimplePool();
   /*poolを使ったリレー接続 */
   useEffect(() => {
-    const relayURLs = [
-      "wss://relay-jp.nostr.wirednet.jp",
-      "punya",
-      "wss://relay-jp.nostr.wirednet.jp",
-    ];
+    const relayURLs = ["ws://172.16.1.73"];
     const filter: Filter = {
       kinds: [1],
       limit: 100,
