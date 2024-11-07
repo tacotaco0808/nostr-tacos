@@ -2,7 +2,7 @@ import { generateSecretKey } from "nostr-tools";
 import { SendPost } from "../../components/SendPost/SendPost";
 
 const Home = () => {
-  const relayURLs = ["wss://relay-jp.nostr.wirednet.jp", "punya"];
+  const relayURLs = ["ws://172.16.1.73"];
   const sk = generateSecretKey();
   return (
     <>
