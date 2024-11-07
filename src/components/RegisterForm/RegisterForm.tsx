@@ -14,7 +14,7 @@ const RegisterForm = () => {
   };
   const initializeRelay = async () => {
     try {
-      const relay = await Relay.connect("wss://relay-jp.nostr.wirednet.jp");
+      const relay = await Relay.connect("ws://172.16.1.73");
       relayRef.current = relay;
       console.log(`connected to ${relay.url}`);
       setIsConnected(true);
