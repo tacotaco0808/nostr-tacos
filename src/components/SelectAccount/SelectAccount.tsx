@@ -1,9 +1,19 @@
+import { Card, CardContent } from "@mui/material";
 import { useEffect, useState } from "react";
 
+type UserData = {
+  name: string;
+  connectingRelays: string[];
+  secKey: Uint8Array;
+};
 export const SelectAccount = () => {
-  const [accountData, setAccountData] = useState<Record<string, any>>();
-  const getItemsByKeySubstring = (substring: string): Record<string, any> => {
-    const result: Record<string, any> = {};
+  const [accountDataJSON, setAccountDataJSON] =
+    useState<Record<string, UserData>>(); //ローカルストレージから引っ張ってきた生のデータ
+  const [selectedAccountData, setSelectedAccountData] = useState<UserData>();
+  const getItemsByKeySubstring = (
+    substring: string
+  ): Record<string, UserData> => {
+    const result: Record<string, UserData> = {};
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i); //すべて取得
       if (key && key.includes(substring)) {
@@ -14,19 +24,28 @@ export const SelectAccount = () => {
     }
     return result;
   };
+  const selectedHandle = (userData: UserData) => {
+    setSelectedAccountData(userData);
+  };
   useEffect(() => {
     const fetchedData = getItemsByKeySubstring("user:");
-    setAccountData(fetchedData);
+    setAccountDataJSON(fetchedData);
   }, []);
   return (
     <>
-      <h1>Select Account</h1>
-      {accountData ? (
+      <h1>ユーザー選択</h1>
+      {accountDataJSON ? (
         <>
           <ul>
-            {Object.entries(accountData).map(([key, value]) => (
+            {Object.entries(accountDataJSON).map(([key, value]) => (
               <li key={key}>
-                <strong>{key}:</strong> {JSON.stringify(value)}
+                <Card variant="outlined" style={{ margin: "10px" }}>
+                  <CardContent>
+                    <h3>名前:{value.name}</h3>
+                    <p>{value.secKey}</p>
+                    <button onClick={() => selectedHandle(value)}>選択</button>
+                  </CardContent>
+                </Card>
               </li>
             ))}
           </ul>
@@ -34,6 +53,14 @@ export const SelectAccount = () => {
       ) : (
         <>
           <p>loading account data...</p>
+        </>
+      )}
+      {selectedAccountData && (
+        <>
+          <Card variant="outlined">
+            <h3>選択されたユーザー</h3>
+            <h4>名前:{selectedAccountData.name}</h4>
+          </Card>
         </>
       )}
     </>
