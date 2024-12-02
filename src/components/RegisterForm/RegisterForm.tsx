@@ -22,7 +22,7 @@ const RegisterForm = () => {
     if (data.secKey instanceof Uint8Array) {
       data.secKey = Array.from(data.secKey); // Uint8Arrayを配列化
     }
-    localStorage.setItem(key, JSON.stringify(data));
+    localStorage.setItem(`user:${key}`, JSON.stringify(data));
   };
   const uint8ArrayToBase64 = (array: Uint8Array): string => {
     return btoa(String.fromCharCode(...array));
