@@ -10,6 +10,13 @@ export const SelectAccount = () => {
   const [accountDataJSON, setAccountDataJSON] =
     useState<Record<string, UserData>>(); //ローカルストレージから引っ張ってきた生のデータ
   const [selectedAccountData, setSelectedAccountData] = useState<UserData>();
+  const saveToLocalStorage = (data: any) => {
+    /*ローカルストレージへデータを保存 */
+    if (data.secKey instanceof Uint8Array) {
+      data.secKey = Array.from(data.secKey); // Uint8Arrayを配列化
+    }
+    localStorage.setItem(`currentUser:`, JSON.stringify(data));
+  };
   const getItemsByKeySubstring = (
     substring: string
   ): Record<string, UserData> => {
@@ -25,6 +32,7 @@ export const SelectAccount = () => {
     return result;
   };
   const selectedHandle = (userData: UserData) => {
+    saveToLocalStorage(userData);
     setSelectedAccountData(userData);
   };
   useEffect(() => {
