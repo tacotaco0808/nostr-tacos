@@ -40,7 +40,6 @@ const ShowPosts = () => {
 
   return (
     <>
-      aiuepo
       <div>
         <h1>Nostr Events</h1>
         <ul>
