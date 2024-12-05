@@ -13,7 +13,7 @@ const ShowPosts = () => {
   const pool = new SimplePool();
   /*poolを使ったリレー接続 */
   useEffect(() => {
-    const relayURLs = ["ws://172.16.1.73"];
+    const relayURLs = ["r.kojira.io"];
     const filter: Filter = {
       kinds: [1],
       limit: 100,
@@ -40,7 +40,6 @@ const ShowPosts = () => {
 
   return (
     <>
-      aiuepo
       <div>
         <h1>Nostr Events</h1>
         <ul>
