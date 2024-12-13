@@ -2,6 +2,8 @@ import { Event } from "nostr-tools";
 import { useEffect, useState } from "react";
 import ReplayTargetPost from "../ReplayTargetPost/ReplayTargetPost";
 import styles from "./Post.module.scss";
+import { Card, CardContent } from "@mui/material";
+
 type nostrPost = Event & {
   isReplay: boolean;
   toRelayURLs: string[];
@@ -37,57 +39,60 @@ const Post: React.FC<postProps> = ({ postEvent, isLoadingPosts }) => {
   return (
     <>
       <ul>
-        <li key={postEvent.id}>
-          {postEvent.isReplay ? (
-            // 返信投稿の場合の表示
-            <div
-              style={{
-                backgroundColor: "#f0f8ff",
-                padding: "10px",
-                borderRadius: "5px",
-              }}
-            >
-              <p>
-                <strong>返信:</strong> {postEvent.content}
-              </p>
-              {imgUrls?.map((url) => (
-                <div key={url}>
-                  <img src={url} alt="Image" style={{ maxWidth: "100%" }} />
+        <Card variant="outlined" style={{ margin: "10px" }}>
+          <CardContent>
+            <li key={postEvent.id}>
+              {postEvent.isReplay ? (
+                // 返信投稿の場合の表示
+                <div
+                  style={{
+                    backgroundColor: "#f0f8ff",
+                    padding: "10px",
+                    borderRadius: "5px",
+                  }}
+                >
+                  <p>投稿者ID:{postEvent.pubkey}</p>
+                  <p>{postEvent.content}</p>
+                  {imgUrls?.map((url) => (
+                    <div key={url}>
+                      <img src={url} alt="Image" style={{ maxWidth: "100%" }} />
+                    </div>
+                  ))}
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      fontStyle: "italic",
+                      color: "#888",
+                    }}
+                  >
+                    {/* 返信元の投稿を表示する処理のプレースホルダー */}
+                    {isVisibleReplayTargetPost ? (
+                      <ReplayTargetPost
+                        replayPost={postEvent}
+                        isLoadingPost={isLoadingPosts}
+                      />
+                    ) : (
+                      <button onClick={handleShowReplayTargetPost}>
+                        返信元を表示する
+                      </button>
+                    )}
+                  </div>
                 </div>
-              ))}
-
-              <div
-                style={{
-                  marginTop: "10px",
-                  fontStyle: "italic",
-                  color: "#888",
-                }}
-              >
-                {/* 返信元の投稿を表示する処理のプレースホルダー */}
-                {isVisibleReplayTargetPost ? (
-                  <ReplayTargetPost
-                    replayPost={postEvent}
-                    isLoadingPost={isLoadingPosts}
-                  />
-                ) : (
-                  <button onClick={handleShowReplayTargetPost}>
-                    返信元を表示する
-                  </button>
-                )}
-              </div>
-            </div>
-          ) : (
-            // 通常投稿の場合の表示
-            <div style={{ padding: "10px" }}>
-              <p>{postEvent.content}</p>
-              {imgUrls?.map((url) => (
-                <div key={url}>
-                  <img src={url} alt="Image" style={{ maxWidth: "100%" }} />
+              ) : (
+                // 通常投稿の場合の表示
+                <div style={{ padding: "10px" }}>
+                  <p>投稿者ID:{postEvent.pubkey}</p>
+                  <p>{postEvent.content}</p>
+                  {imgUrls?.map((url) => (
+                    <div key={url}>
+                      <img src={url} alt="Image" style={{ maxWidth: "100%" }} />
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
-        </li>
+              )}
+            </li>
+          </CardContent>
+        </Card>
       </ul>
     </>
   );
