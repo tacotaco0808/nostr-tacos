@@ -31,7 +31,17 @@ export const SendPost: React.FC<sendPostProps> = ({ relays }) => {
       const signedEvent = finalizeEvent(messageToSend, secretKey);
       const sendMessage = async () => {
         try {
-          pool.publish(relays, signedEvent);
+          if (
+            loginAccountData &&
+            loginAccountData.connectingRelays.length > 0
+          ) {
+            pool.publish(loginAccountData?.connectingRelays, signedEvent);
+          } else {
+            console.log(
+              "接続先リレーが設定されていませんデフォルトのリレーに接続します。"
+            );
+            pool.publish(relays, signedEvent);
+          }
         } catch (error) {}
       };
       sendMessage();
