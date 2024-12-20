@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@mui/material";
+import { Button, Card, CardContent, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 
 type UserData = {
@@ -37,7 +37,7 @@ export const SelectAccount = () => {
   };
   useEffect(() => {
     const fetchedData = getItemsByKeySubstring("user:");
-    setAccountDataJSON(fetchedData);
+    setAccountDataJSON(fetchedData); //読み取ったアカウントデータを配列で管理
   }, []);
   return (
     <>
@@ -45,17 +45,30 @@ export const SelectAccount = () => {
       {accountDataJSON ? (
         <>
           <ul>
-            {Object.entries(accountDataJSON).map(([key, value]) => (
-              <li key={key}>
-                <Card variant="outlined" style={{ margin: "10px" }}>
-                  <CardContent>
-                    <h3>名前:{value.name}</h3>
-                    <p>{value.secKey}</p>
-                    <button onClick={() => selectedHandle(value)}>選択</button>
-                  </CardContent>
-                </Card>
-              </li>
-            ))}
+            {Object.entries(accountDataJSON).map(([key, value]) => {
+              return (
+                <li key={key}>
+                  <Card variant="outlined" style={{ margin: "10px" }}>
+                    <CardContent>
+                      <h3>名前:{value.name}</h3>
+                      <p>{value.secKey}</p>
+                      {value.connectingRelays &&
+                      value.connectingRelays.length > 0 ? (
+                        <p>接続先リレー:{value.connectingRelays.join(", ")}</p>
+                      ) : (
+                        <p>接続先リレーがありません</p>
+                      )}
+                      <Button
+                        variant="contained"
+                        onClick={() => selectedHandle(value)}
+                      >
+                        リレーを追加して選択
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </li>
+              );
+            })}
           </ul>
         </>
       ) : (
