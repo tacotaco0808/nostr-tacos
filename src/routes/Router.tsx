@@ -3,6 +3,7 @@ import Home from "../pages/Home/Home";
 import { ViewPosts } from "../pages/ViewPosts/ViewPosts";
 import { Register } from "../pages/Register/Register";
 import { Login } from "../pages/Login/Login";
+import { FollowPage } from "../pages/FolowPage/FollowPage";
 
 export const Router = () => {
   return (
@@ -13,6 +14,7 @@ export const Router = () => {
           <Route path={"/view"} element={<ViewPosts />} />
           <Route path={"/register"} element={<Register />} />
           <Route path={"/login"} element={<Login />} />
+          <Route path={"/follow"} element={<FollowPage />} />
         </Routes>
       </BrowserRouter>
     </>
