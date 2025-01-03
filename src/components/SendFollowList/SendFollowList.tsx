@@ -91,7 +91,8 @@ export const SendFollowList: React.FC<sendPostProps> = ({ relays }) => {
   return (
     <>
       <p>
-        tagsの例 <br />
+        tagsの例: "p", "91cf9..4e5ca", "wss://alicerelay.com/", "alice"
+        <br />
         "tags": [ ["p", "91cf9..4e5ca", "wss://alicerelay.com/", "alice"],
         <br /> ["p", "14aeb..8dad4", "wss://bobrelay.com/nostr", "bob"],
         <br /> ["p", "612ae..e610f", "ws://carolrelay.com/ws", "carol"] ],
